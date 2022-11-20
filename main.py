@@ -1,6 +1,6 @@
-from Phase1 import Node # successor_func, cost_func, goal_test, depth_func, heuristics
-from Phase2 import BFS, DFS, IDS, UCS # we will import Phase1's functions inside this and next lib
-from Phase3 import A_Star, BestFS
+from Phase1 import Node, Graph, successor_func # successor_func, cost_func, goal_test, depth_func, heuristics
+from Phase2 import BFS #, DFS, IDS, UCS # we will import Phase1's functions inside this and next lib
+# from Phase3 import A_Star, BestFS
 
 
 if __name__ == '__main__':
@@ -8,16 +8,35 @@ if __name__ == '__main__':
     input_matrix = []
 
     for i in range(m):
-        row = [int(i) for i in input().split()]
+        row = [i for i in input().split()]
         input_matrix.append(row)
 
-    initial_node = Node(input_matrix, cost=0, depth=0)
+    initial_node = Node(input_matrix)
+    graph = Graph(initial_node)
+    
+    print(BFS(graph))
 
-    methods = [BFS, DFS, IDS, UCS, A_Star, BestFS]
-    setOfAnsowers = []
+    # temp = successor_func(initial_node)
+    # for state in graph.goal_nodes:
+    #     for row in state.matrix:
+    #         print(row)
+    #     print()
+    # methods = [BFS, DFS, IDS, UCS, A_Star, BestFS]
+    # setOfAnsowers = []
     
-    for method in methods:
-        steps, total_cost, total_depth = func(initial_node)
-        setOfAnsowers.append([steps, total_cost, total_depth])
+    # for method in methods:
+    #     steps, total_cost, total_depth = func(initial_node)
+    #     setOfAnsowers.append([steps, total_cost, total_depth])
     
-    best_ans = [None, float(inf)]
+    # best_ans = [None, float(inf), None]
+
+    # for i, ans in enumerate(setOfAnsowers):
+    #     if ans[1] < best_ans[1] :
+    #         best_ans = ans
+
+    # if best_ans[1] == float('inf'):
+    #     print("can't pass the butter")
+    # else:
+    #     print(" ".join(best_ans[0]))
+    #     print(best_ans[1])
+    #     print(best_ans[2])

@@ -49,7 +49,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i-1][j]:
             temp[i-1][j] = temp[i-1][j].replace('b', '')
             temp[i-2][j] += 'b'
-        output['U'] = temp
+        output['U'] = Node(temp)
     if 'L' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -57,7 +57,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i][j-1]:
             temp[i][j-1] = temp[i][j-1].replace('b', '')
             temp[i][j-2] += 'b'
-        output['L'] = temp
+        output['L'] = Node(temp)
     if 'D' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -65,7 +65,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i+1][j]:
             temp[i+1][j] = temp[i+1][j].replace('b', '')
             temp[i+2][j] += 'b'
-        output['D'] = temp
+        output['D'] = Node(temp)
     if 'R' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -73,7 +73,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i][j+1]:
             temp[i][j+1] = temp[i][j+1].replace('b', '')
             temp[i][j+2] += 'b'
-        output['R'] = temp
+        output['R'] = Node(temp)
     
     return output
 
