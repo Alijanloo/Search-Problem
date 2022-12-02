@@ -1,10 +1,12 @@
-from Phase1 import successor_func
+from Phase1 import successor_func, goal_test
 
-def BFS(graph):
+def BFS(root_node):
+    # total_cost = 0
+    # total_depth = 0
     fring = []
-    fring.append(([], graph.root_node))
-    visited = [graph.root_node]
-    
+    fring.append(([], root_node))
+    visited = [root_node]
+
     def is_visited(node):
         for n in visited:
             if node.matrix == n.matrix:
@@ -12,18 +14,18 @@ def BFS(graph):
         return False
 
     while fring:
-        steps, temp = fring.pop(0)
-        next_nodes = successor_func(temp)
+        steps, node = fring.pop(0)
+
+        if goal_test(node):
+            # for row in n.matrix:
+            #     print(row)
+            return steps, node.cost, node.depth
+
+        next_nodes = successor_func(node)
         
         for dir, n in next_nodes.items():
             if not is_visited(n):
                 steps.append(dir)
-                
-                if graph.goal_test(n):
-                    for row in n.matrix:
-                        print(row)
-                    return steps
-                    
                 fring.append((steps.copy(), n))
                 visited.append(n)
                 steps.pop(len(steps)-1)

@@ -1,8 +1,10 @@
 import copy
 
 class Node:
-    def __init__(self, matrix):
+    def __init__(self, matrix, cost=None, depth=None):
         self.matrix = matrix
+        self.cost = cost
+        self.depth = depth
 
 def check_dirs(i, j, dir, matrix) -> bool:
     '''checks if the proposed direction from that position is possible or not'''
@@ -20,10 +22,13 @@ def check_dirs(i, j, dir, matrix) -> bool:
     return True
 
 def successor_func(node) -> dict:
+    ''' produses directions that robot can go from current position, along with 
+    the nodes that will have created after going that directions'''
+
     matrix = node.matrix
     
     def find_pos() -> tuple:
-        ''' finding robot position'''
+        ''' finds robot position'''
         for i, row in enumerate(matrix):
             for j, cell in enumerate(row):
                 if 'r' in cell:
@@ -49,7 +54,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i-1][j]:
             temp[i-1][j] = temp[i-1][j].replace('b', '')
             temp[i-2][j] += 'b'
-        output['U'] = Node(temp)
+        output['U'] = Node(temp, node.cost + int(temp[i-1][j][0]), node.depth + 1)
     if 'L' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -57,7 +62,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i][j-1]:
             temp[i][j-1] = temp[i][j-1].replace('b', '')
             temp[i][j-2] += 'b'
-        output['L'] = Node(temp)
+        output['L'] = Node(temp, node.cost + int(temp[i][j-1][0]), node.depth + 1)
     if 'D' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -65,7 +70,7 @@ def successor_func(node) -> dict:
         if 'b' in temp[i+1][j]:
             temp[i+1][j] = temp[i+1][j].replace('b', '')
             temp[i+2][j] += 'b'
-        output['D'] = Node(temp)
+        output['D'] = Node(temp, node.cost + int(temp[i+1][j][0]), node.depth + 1)
     if 'R' in feasable_dirs:
         temp = copy.deepcopy(matrix)
         temp[i][j] = temp[i][j].replace('r', '')
@@ -73,47 +78,16 @@ def successor_func(node) -> dict:
         if 'b' in temp[i][j+1]:
             temp[i][j+1] = temp[i][j+1].replace('b', '')
             temp[i][j+2] += 'b'
-        output['R'] = Node(temp)
+        output['R'] = Node(temp, node.cost + int(temp[i][j+1][0]), node.depth + 1)
     
     return output
 
-class Graph:
+def goal_test(node) -> bool:
+    for i, row in enumerate(node.matrix):
+        for j, cell in enumerate(row):
+            if ('p' in cell) and ('b' not in cell):
+                return False
+    return True
 
-    def __init__(self, root_node) -> None:
-        self.root_node = root_node
-        self.goal_nodes = self.find_goals()
-
-    def find_goals(self) -> list:
-        matrix = copy.deepcopy(self.root_node.matrix)
-        p_poses = [] # positions of p's
-        for i, row in enumerate(matrix):
-                for j, cell in enumerate(row):
-                    if 'r' in cell:
-                        matrix[i][j] = matrix[i][j].replace('r', '')
-                    if 'b' in cell:
-                        matrix[i][j] = matrix[i][j].replace('b', '')
-                    elif 'p' in cell:
-                        matrix[i][j] += 'b'
-                        p_poses.append((i, j))
-        
-        goal_nodes = []
-        for p in p_poses:
-            for d in ['U', 'L', 'D', 'R']:
-                if check_dirs(p[0], p[1], d, matrix):
-                    temp = copy.deepcopy(matrix)
-                    if d == 'U':
-                        temp[p[0]-1][p[1]] += 'r'
-                    if d == 'L':
-                        temp[p[0]][p[1]-1] += 'r'
-                    if d == 'D':
-                        temp[p[0]+1][p[1]] += 'r'
-                    if d == 'R':
-                        temp[p[0]][p[1]+1] += 'r'
-                    goal_nodes.append(Node(temp))
-        return goal_nodes
-            
-    def goal_test(self, node) -> bool:
-        for n in self.goal_nodes:
-            if n.matrix == node.matrix:
-                return True
-        return False
+def heuristic(node):
+    pass
