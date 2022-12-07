@@ -90,4 +90,35 @@ def goal_test(node) -> bool:
     return True
 
 def heuristic(node):
-    pass
+
+    def find_poses(matrix):
+        res = [(), [], []]
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                if 'r' in matrix[i][j]:
+                    res[0] = (i,j)
+                if 'b' in matrix[i][j]:
+                    res[1].append((i,j))
+                if 'p' in matrix[i][j]:
+                    res[2].append((i,j))
+        return res
+    
+    robot, butters, points = find_poses(node.matrix)
+    
+    def manhatan_dis(start, end):
+        return abs(start[0] - end[0]) + abs(start[1] - end[1])
+
+    rtob = float('inf')
+    for b in butters:
+        if manhatan_dis(robot, b) < rtob:
+            rtob = manhatan_dis(robot, b)
+        
+    total_btop = 0
+    for b in butters:
+        btop = float('inf')
+        for p in points:
+            if manhatan_dis(b, p) < btop:
+                btop = manhatan_dis(b, p)
+        total_btop += btop
+
+    return rtob + total_btop
