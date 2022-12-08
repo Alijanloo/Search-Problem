@@ -1,5 +1,5 @@
 from Phase1 import Node, successor_func # successor_func, goal_test, depth_func, heuristic
-from Phase2 import BFS, DFS #, DFS, IDS, UCS # we will import Phase1's functions inside this and next lib
+from Phase2 import BFS, DFS,IDS #, DFS, IDS, UCS # we will import Phase1's functions inside this and next lib
 # from Phase3 import A_Star, BestFS
 
 
@@ -13,8 +13,9 @@ if __name__ == '__main__':
 
     initial_node = Node(input_matrix, 0, 0)
 
-    print(BFS(initial_node))
-    print(DFS(initial_node))
+    # print(BFS(initial_node))
+    # print(DFS(initial_node))
+    print(IDS(initial_node,1000))
 
     # temp = successor_func(initial_node)
     # for state in graph.goal_nodes:

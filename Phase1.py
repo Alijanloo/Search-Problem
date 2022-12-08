@@ -92,6 +92,7 @@ def goal_test(node) -> bool:
 def heuristic(node):
 
     def find_poses(matrix):
+        #Find Bot poses, Butter poses,Point Poses
         res = [(), [], []]
         for i in range(len(matrix)):
             for j in range(len(matrix[0])):
@@ -108,12 +109,13 @@ def heuristic(node):
     def manhatan_dis(start, end):
         return abs(start[0] - end[0]) + abs(start[1] - end[1])
 
+    #Find Min Distance Robot to butters
     rtob = float('inf')
     for b in butters:
         if manhatan_dis(robot, b) < rtob:
             rtob = manhatan_dis(robot, b)
         
-    total_btop = 0
+    total_btop = 0 #Minimum Summations (Every B From P's)
     for b in butters:
         btop = float('inf')
         for p in points:
