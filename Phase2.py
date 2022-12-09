@@ -85,3 +85,29 @@ def IDS(root_node,maxdepth):
                     steps.pop(len(steps)-1)
         depth += 1
 
+def UCS(root_node): # Expands the cheapest nodes first. 
+    pq = PriorityQueue() # Could be replaced by two list and one of them should be always sorted which basically means a priority queue 
+    pq.put((0, ([], root_node)))
+    visited = [root_node]
+
+    def is_visited(node):
+        for n in visited:
+            if node.matrix == n.matrix:
+                return True
+        return False
+
+    while not pq.empty():
+        steps, node = pq.get()[1]
+
+        if goal_test(node):
+            return steps, node.cost, node.depth
+
+        next_nodes = successor_func(node)
+        
+        for dir, n in next_nodes.items():
+            if not is_visited(n):
+                steps.append(dir)
+                h =  n.cost # when using UCS we pay attention only to the cost of the nodes.
+                pq.put((h, (steps.copy(), n)))
+                visited.append(n)
+                steps.pop(len(steps)-1)
