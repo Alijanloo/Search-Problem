@@ -17,13 +17,17 @@ def main():
         print("can't pass the butter")
         return
     
-    # print(BFS(initial_node))
+    # print(BestFS(initial_node))
     methods = {'BFS': BFS, 'DFS': DFS, 'IDS': IDS, 'UCS': UCS, 'A_star': A_star, 'BestfS': BestFS}
     setOfAnsowers = []
     
     for name, method in methods.items():
         print(f'running {name} ...')
-        steps, total_cost, total_depth = method(initial_node)
+        ans = method(initial_node)
+        if ans == None:
+            print("can't pass the butter")
+            return
+        steps, total_cost, total_depth = ans
         print(f'{name} answer: {[steps, total_cost, total_depth]}')
         setOfAnsowers.append([steps, total_cost, total_depth])
     

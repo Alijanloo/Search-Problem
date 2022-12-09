@@ -25,6 +25,8 @@ def find_poses(matrix):
 def check_dirs(i, j, dir, matrix) -> bool:
     '''checks if the proposed direction from that position is possible or not'''
     try:
+        if 'b' in matrix[i][j] and 'p' in matrix[i][j]: # the case that a butter is already in a point
+            return False
         if dir == 'U' and (i == 0 or matrix[i-1][j] == 'x' or ('b' in matrix[i][j] and 'b' in matrix[i-1][j])):
             return False
         if dir == 'L' and (j == 0 or matrix[i][j-1] == 'x' or ('b' in matrix[i][j] and 'b' in matrix[i][j-1])):
