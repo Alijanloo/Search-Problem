@@ -1,9 +1,12 @@
 from queue import PriorityQueue
 from Phase1 import successor_func, goal_test, heuristic
 
-def BestFS(root_node):
+def BestFS(root_node): # a greedy algorithm that just considers heuristic to expand child nodes
     pq = PriorityQueue()
-    pq.put((0, ([], root_node)))
+    pq.put((0, ([], root_node))) # our elements of pq will be tupels wich when we put a new tuple to it 
+    # compares tuples to put it in the right position, in that way it's always remains sorted,
+    # when it trys to compare two tuples, first it compares the first elements of tuples, if they were equal
+    # it puts theme beside each other
     visited = [root_node]
 
     def is_visited(node):
@@ -16,8 +19,6 @@ def BestFS(root_node):
         steps, node = pq.get()[1]
 
         if goal_test(node):
-            # for row in n.matrix:
-            #     print(row)
             return steps, node.cost, node.depth
 
         next_nodes = successor_func(node)

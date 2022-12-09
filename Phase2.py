@@ -1,11 +1,11 @@
 from Phase1 import successor_func, goal_test
 from queue import PriorityQueue
+import time
 
 def BFS(root_node):
-    # total_cost = 0
-    # total_depth = 0
-    fring = []
-    fring.append(([], root_node))
+    # start = time.time()
+    fringe = []
+    fringe.append(([], root_node)) # the first element of tuple stores steps taken to achive this node
     visited = [root_node]
 
     def is_visited(node):
@@ -14,12 +14,11 @@ def BFS(root_node):
                 return True
         return False
 
-    while fring:
-        steps, node = fring.pop(0)
+    while fringe:
+        steps, node = fringe.pop(0)
 
         if goal_test(node):
-            # for row in n.matrix:
-            #     print(row)
+            # print("duration: ", time.time() - start)
             return steps, node.cost, node.depth
 
         next_nodes = successor_func(node)
@@ -27,9 +26,12 @@ def BFS(root_node):
         for dir, n in next_nodes.items():
             if not is_visited(n):
                 steps.append(dir)
-                fring.append((steps.copy(), n))
+                fringe.append((steps.copy(), n))
                 visited.append(n)
+                # after this iteration we're gonna see the next childs of parnt,
+                #  so we won't need direction of this child anymore
                 steps.pop(len(steps)-1)
+    # print("duration: ", time.time() - start)
 
 def DFS(root_node):
     st = []
@@ -57,14 +59,17 @@ def DFS(root_node):
                 visited.append(n)
                 steps.pop(len(steps)-1)
 
-def IDS(root_node,maxdepth):
+def IDS(root_node):
+    maxdepth = 100
+
     def is_visited(node):
         for n in visited:
             if node.matrix == n.matrix:
                 return True
         return False
+
     depth = 0
-    while depth<maxdepth :
+    while depth < maxdepth :
         st = []
         st.append(([], root_node))
         visited = [root_node]

@@ -5,6 +5,22 @@ class Node:
         self.matrix = matrix
         self.cost = cost
         self.depth = depth
+    # make nodes comparable, because it will be needed in sorting priority queue
+    def __lt__(self, other):
+        return True
+
+def find_poses(matrix):
+    #Finds robot, Butters and Points Positions
+    res = [(), [], []]
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if 'r' in matrix[i][j]:
+                res[0] = (i,j)
+            if 'b' in matrix[i][j]:
+                res[1].append((i,j))
+            if 'p' in matrix[i][j]:
+                res[2].append((i,j))
+    return res
 
 def check_dirs(i, j, dir, matrix) -> bool:
     '''checks if the proposed direction from that position is possible or not'''
@@ -23,20 +39,15 @@ def check_dirs(i, j, dir, matrix) -> bool:
 
 def successor_func(node) -> dict:
     ''' produses directions that robot can go from current position, along with 
-    the nodes that will have created after going that directions'''
+    the nodes that will have created after going that directions in the format
+     of keys and values in a dictinary'''
 
     matrix = node.matrix
     
-    def find_pos() -> tuple:
-        ''' finds robot position'''
-        for i, row in enumerate(matrix):
-            for j, cell in enumerate(row):
-                if 'r' in cell:
-                    return i, j
-    i, j = find_pos()
+    i, j = find_poses(matrix)[0]
 
     feasable_dirs = ['U', 'R', 'D', 'L']
-    # the directions who survive in the list, can be taken
+    # the directions whose survive in the list, can be taken
     if (not check_dirs(i, j, 'U', matrix)) or ('b' in matrix[i-1][j] and not check_dirs(i-1, j, 'U', matrix)):
         feasable_dirs.remove('U')
     if (not check_dirs(i, j, 'L', matrix)) or ('b' in matrix[i][j-1] and not check_dirs(i, j-1, 'L', matrix)):
@@ -83,31 +94,17 @@ def successor_func(node) -> dict:
     return output
 
 def goal_test(node) -> bool:
-    for i, row in enumerate(node.matrix):
-        for j, cell in enumerate(row):
+    for row in node.matrix:
+        for cell in row:
             if ('p' in cell) and ('b' not in cell):
                 return False
     return True
 
-def heuristic(node):
-
-    def find_poses(matrix):
-        #Find Bot poses, Butter poses,Point Poses
-        res = [(), [], []]
-        for i in range(len(matrix)):
-            for j in range(len(matrix[0])):
-                if 'r' in matrix[i][j]:
-                    res[0] = (i,j)
-                if 'b' in matrix[i][j]:
-                    res[1].append((i,j))
-                if 'p' in matrix[i][j]:
-                    res[2].append((i,j))
-        return res
-    
-    robot, butters, points = find_poses(node.matrix)
-    
-    def manhatan_dis(start, end):
+def manhatan_dis(start, end):
         return abs(start[0] - end[0]) + abs(start[1] - end[1])
+
+def heuristic(node):
+    robot, butters, points = find_poses(node.matrix)
 
     #Find Min Distance Robot to butters
     rtob = float('inf')
@@ -124,3 +121,60 @@ def heuristic(node):
         total_btop += btop
 
     return rtob + total_btop
+
+from queue import PriorityQueue
+def is_feasible(node):
+    """it check if the problem can be solved or not:
+    breaks our problem to some subproblems, wich in the way in every subproblem, it considers just one
+    butter and one point in the table an trys to solve it, if at least one of these subproblems couldn't 
+    be solved, our original problem has no solution, thus it returns False"""
+    table = copy.deepcopy(node.matrix)
+    robot, butters, points = find_poses(table)
+
+    # clearing the table of all butters and points
+    for i, row in enumerate(table):
+        for j, cell in enumerate(row):
+            if 'b' in cell:
+                table[i][j] = table[i][j].replace('b', '')
+            if 'p' in cell:
+                table[i][j] = table[i][j].replace('p', '')
+
+    def is_visited(node):
+        for n in visited:
+            if node.matrix == n.matrix:
+                return True
+        return False    
+
+    for butter in butters:
+        # plant the butter to its position
+        table[butter[0]][butter[1]] += 'b'
+        for point in points:
+            table[point[0]][point[1]] += 'p'
+            found = False
+
+            # now we try to drive robot to target using bestfs
+            root_node = Node(table, 0, 0)
+            pq = PriorityQueue()
+            pq.put((0, root_node))
+            visited = [root_node]
+
+            while not pq.empty():
+                node = pq.get()[1]
+
+                if goal_test(node):
+                    found = True
+                    break
+
+                next_nodes = successor_func(node)
+                
+                for n in next_nodes.values():
+                    if not is_visited(n):
+                        h = heuristic(n)
+                        pq.put((h, n))
+                        visited.append(n)
+
+            if not found: return False
+            table[point[0]][point[1]] = table[point[0]][point[1]].replace('p', '')
+        # pull the butter out from its place to make table clear for next subproblems
+        table[butter[0]][butter[1]] = table[butter[0]][butter[1]].replace('b', '')
+    return True
