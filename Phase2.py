@@ -1,4 +1,5 @@
 from Phase1 import successor_func, goal_test
+from queue import PriorityQueue
 
 def BFS(root_node):
     # total_cost = 0
