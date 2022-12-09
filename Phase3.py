@@ -25,7 +25,7 @@ def BestFS(root_node):
         for dir, n in next_nodes.items():
             if not is_visited(n):
                 steps.append(dir)
-                h = heuristic(n) + n.cost
+                h = heuristic(n)
                 pq.put((h, (steps.copy(), n)))
                 visited.append(n)
                 steps.pop(len(steps)-1)
