@@ -55,7 +55,7 @@ def DFS(root_node):
         for dir, n in next_nodes.items():
             if not is_visited(n):
                 steps.append(dir)
-                st.insert(0,(steps.copy(), n))
+                st.insert(0,(steps.copy(), n)) #insert at 0 index becuse DFS is LIFO
                 visited.append(n)
                 steps.pop(len(steps)-1)
 
@@ -75,6 +75,7 @@ def IDS(root_node):
         visited = [root_node]
         while st:
             steps, node = st.pop(0)
+            #Checking for depth (if node depth is more than depth we continue the loop becuse we dont need to check this series)
             if node.depth > depth:
                 continue
 
@@ -89,6 +90,7 @@ def IDS(root_node):
                     st.insert(0,(steps.copy(), n))
                     visited.append(n)
                     steps.pop(len(steps)-1)
+        #Adding depth (we check from depth=0 to maxdepth for finding goal nodes)
         depth += 1
 
 def UCS(root_node): # Expands the cheapest nodes first. 
